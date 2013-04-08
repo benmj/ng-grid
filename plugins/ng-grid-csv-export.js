@@ -5,6 +5,12 @@
 //    download from a data-uri link
 //
 // Notes:  This has not been adequately tested and is very much a proof of concept at this point
+
+Number.prototype.padLeft = function(base,chr){
+    var  len = (String(base || 10).length - String(this).length)+1;
+    return len > 0? new Array(len).join(chr || '0')+this : this;
+}
+
 ngGridCsvExportPlugin = function(opts) {
     var self = this;
     self.grid = null;
@@ -21,6 +27,11 @@ ngGridCsvExportPlugin = function(opts) {
                 if (typeof(str) === 'number') return '' + str;
                 if (typeof(str) === 'boolean') return (str ? 'TRUE' : 'FALSE') ;
                 if (typeof(str) === 'string') return str.replace(/"/g,'""');
+                if (typeof(str) === 'object' && str.getUTCDate) {
+                    return [str.getFullYear(), (str.getMonth()+1).padLeft(), str.getDate().padLeft()].join('-') +
+                       ' ' +
+                       [str.getHours().padLeft(), str.getMinutes().padLeft(), str.getSeconds().padLeft()].join(':');
+                }
                 return JSON.stringify(str).replace(/"/g,'""');
             }
             function swapLastCommaForNewline(str) {
